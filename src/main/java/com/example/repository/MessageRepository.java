@@ -15,6 +15,6 @@ public interface MessageRepository {
 
 // /**
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findMessageByAccountId(Long accountId);
+    // List<Message> findMessageByAccountId(Long accountId);
 }
 // */
