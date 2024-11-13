@@ -133,4 +133,24 @@ public class SocialMediaController {
         }
     }
 
+    // Update Message
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, @RequestBody Message message){
+        if (message.getMessageText().isEmpty() || message.getMessageText().length() > 255){
+            // return ResponseEntity.status(HttpStatus.valueOf(400))
+            //         .body("Client error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Client error");
+        }
+
+        boolean updatedMessage = messageService.updateMessageById(messageId, message.getMessageText());
+        
+        if (message.getMessageText() == null){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Conflict");
+        } else {
+            return ResponseEntity.ok(updatedMessage);
+        }
+    }
+
 }

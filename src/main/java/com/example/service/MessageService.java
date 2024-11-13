@@ -71,4 +71,20 @@ public class MessageService {
         }
 
     }
+
+    // Update Message
+    public boolean updateMessageById(Long messageId, String updatedMessage){
+        Optional<Message> updateMessage = messageRepository.findById(messageId);
+
+        if (updateMessage.isEmpty()){
+            return false;
+        }
+
+        Message message = updateMessage.get();
+        message.setMessageText(updatedMessage);
+
+        messageRepository.save(message);
+
+        return true;
+    }
 }
