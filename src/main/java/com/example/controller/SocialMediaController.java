@@ -9,6 +9,8 @@ import com.example.entity.Message;
 //import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import javax.naming.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +83,13 @@ public class SocialMediaController {
         }
     }
 
-    /**
+    // Get All Messages
     @GetMapping("/messages")
     public List<Message> getAllMessages() {
         return messageService.getAllMessages();
     }
 
+    /**
     @GetMapping("/messages/{messageId}")
     */
 

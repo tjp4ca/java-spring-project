@@ -6,6 +6,8 @@ import com.example.entity.Message;
 import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +30,10 @@ public class MessageService {
 
         return messageRepository.save(message);
 
+    }
+
+    // Get All Messages
+    public List<Message> getAllMessages(){
+        return messageRepository.findAll();
     }
 }
