@@ -10,6 +10,7 @@ import com.example.entity.Message;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.naming.AuthenticationException;
 
@@ -47,7 +48,7 @@ public class SocialMediaController {
         if (registeredAccount == null){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Conflict! Username already exists");
-        } else{
+        } else {
             return ResponseEntity.ok(registeredAccount);
         }
         
@@ -61,7 +62,7 @@ public class SocialMediaController {
         if (loggedinAccount == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Not authorized to login!");
-        } else{
+        } else {
             return ResponseEntity.ok(loggedinAccount);
         }
     }
@@ -78,7 +79,7 @@ public class SocialMediaController {
         if (message.getMessageText() == null){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Conflict");
-        } else{
+        } else {
             return ResponseEntity.ok(createdMessage);
         }
     }
@@ -89,8 +90,47 @@ public class SocialMediaController {
         return messageService.getAllMessages();
     }
 
-    /**
+    // Get Message By Id
     @GetMapping("/messages/{messageId}")
-    */
+    public ResponseEntity<Message> getMessageById(@PathVariable Long messageId){
+        Message message = messageService.getMessageById(messageId);
+        //Optional<Message> message = messageService.getMessageById(messageId);
+
+        System.out.println("hello world");
+
+        if (message == null){
+        //if (message.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .build();
+        } else {
+            //return ResponseEntity.ok(message.get());
+            return ResponseEntity.ok(message);
+        }
+    }
+
+    // Delete Message
+    @DeleteMapping("/messages/{messageId}")
+    public ResponseEntity<?> deleteMessageById(@PathVariable Long messageId){
+
+        boolean deletedMessage = messageService.deleteMessageById(messageId);
+        // messageService.deleteMessageById(messageId);
+
+        // return ResponseEntity.accepted()
+        //             .body("Successfully deleted");
+
+        if (deletedMessage){
+            // return ResponseEntity.ok()
+            //             .body("Successfully deleted");
+
+            return ResponseEntity.ok("Successfully deleted");
+
+            // return ResponseEntity.status(HttpStatus.valueOf(200))
+            //             .body("Successfully deleted");
+
+        } else {
+            return ResponseEntity.ok().build();
+            //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not found");
+        }
+    }
 
 }
