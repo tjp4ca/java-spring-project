@@ -1,12 +1,11 @@
 package com.example.controller;
 
 import com.example.service.AccountService;
-// import com.example.service.MessageService;
+import com.example.service.MessageService;
 
 import com.example.entity.Account;
-// import com.example.entity.Message;
+import com.example.entity.Message;
 
-//import Lab.Model.Sample;
 //import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,83 +29,59 @@ public class SocialMediaController {
     @Autowired
     private AccountService accountService;
 
-    // @Autowired
-    // private MessageService messageService;
+    @Autowired
+    private MessageService messageService;
 
-    /**
-    @GetMapping("/sample/")
-    public Sample getSample(){
-        return new Sample(1L, "sample text");
-    }
-    
-     @GetMapping("/string/{text}")
-    public String getStringPathVariable(@PathVariable String text){
-        return text;
-    }
-
-    @GetMapping("/long/{id}")
-    public long getPathVariable(@PathVariable int id){
-        //you will need to change the method's parameters and return the extracted path variable.
-        return id;
-    }
-
-    // @PostMapping(value = "/requestbody")
-    public Sample postSample(@RequestBody Sample sample){
-        //you will need to change the method's parameters and return the extracted request body.
-        return sample;
-    }
-    */
-
+    // Register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Account account){
+        // username is not blank, password is at least 4 characters long
         if (account.getUsername().isEmpty() || account.getPassword().length() < 4){
             return ResponseEntity.status(HttpStatus.valueOf(400))
                     .body("Client error. Make sure usename exists or password is greater than 4");
         }
-        Account registered_account = accountService.addAccount(account);
-        if (registered_account == null){
+
+        Account registeredAccount = accountService.addAccount(account);
+        if (registeredAccount == null){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Conflict! Username already exists");
         } else{
-            return ResponseEntity.ok(registered_account);
+            return ResponseEntity.ok(registeredAccount);
         }
         
     }
 
-    /**
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Account account){
-        accountService.register(account);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Successfully register");
-    }
-    */
-
+    // Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Account account){
-        Account found_account = accountService.verifyLogin(account);
+        Account loggedinAccount = accountService.verifyLogin(account);
 
-        if (found_account == null){
+        if (loggedinAccount == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Not authorized to login!");
         } else{
-            return ResponseEntity.ok(found_account);
+            return ResponseEntity.ok(loggedinAccount);
+        }
+    }
+
+    // Create Message
+    @PostMapping("/messages")
+    public ResponseEntity<?> createMessage(@RequestBody Message message){
+        if (message.getMessageText().isEmpty() || message.getMessageText().length() > 255){
+            return ResponseEntity.status(HttpStatus.valueOf(400))
+                    .body("Client error");
+        }
+
+        Message createdMessage = messageService.createMessage(message);
+        if (message.getMessageText() == null){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Conflict");
+        } else{
+            return ResponseEntity.ok(createdMessage);
         }
     }
 
     /**
-    @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody Account account) throws AuthenticationException {
-        accountService.login(account.getUsername(), account.getPassword());
-        return ResponseEntity.noContent()
-                    .header("username", account.getUsername)
-                    .build();
-    }
-    */
-
-    /**
-    @PostMapping("/messages")
-
     @GetMapping("/messages")
     public List<Message> getAllMessages() {
         return messageService.getAllMessages();

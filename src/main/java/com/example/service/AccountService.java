@@ -21,20 +21,20 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    // Register
     public Account addAccount(Account account){
-        // Check if the username exists
+        // check if the username exists
         if (accountRepository.existsByUsername(account.getUsername())) {
-            return null; // Username already exists
+            return null;
         }
 
-        // Create a new account object and set the properties
-        Account new_account = new Account();
-        new_account.setUsername(account.getUsername());
-        new_account.setPassword(account.getPassword());
+        // create a new account
+        Account registeredAccount = new Account();
+        registeredAccount.setUsername(account.getUsername());
+        registeredAccount.setPassword(account.getPassword());
 
-        // Save the account to the database
-        accountRepository.save(new_account);
-        return new_account;
+        accountRepository.save(registeredAccount);
+        return registeredAccount;
 
     }
 
@@ -42,15 +42,16 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
+    // Login
     public Account verifyLogin(Account account) {
-        Account found_account = accountRepository.findAccountByUsername(account.getUsername());
+        Account loggedinAccount = accountRepository.findAccountByUsername(account.getUsername());
 
-        if (found_account == null){
+        if (loggedinAccount == null){
             return null;
         }
 
-        if (found_account.getPassword().equals(account.getPassword())){
-            return found_account;
+        if (loggedinAccount.getPassword().equals(account.getPassword())){
+            return loggedinAccount;
         }
         else {
             return null;
