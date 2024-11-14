@@ -40,11 +40,6 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    // Get All Messages By Account ID
-    public List<Message> getAllMessagesByAccountId(Integer accountId){
-        return messageRepository.findByPostedBy(accountId);
-    }
-
     // Get Message By Id
     public Message getMessageById(Integer messageId){
 
@@ -90,5 +85,10 @@ public class MessageService {
 
         return messageRepository.save(message);
 
+    }
+
+    // Get All Messages By Account Id
+    public List<Message> getAllMessagesByAccountId(Integer accountId){
+        return messageRepository.findByPostedBy(accountId);
     }
 }
