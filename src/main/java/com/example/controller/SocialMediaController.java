@@ -76,6 +76,10 @@ public class SocialMediaController {
         }
 
         Message createdMessage = messageService.createMessage(message);
+        if (createdMessage == null){
+            return ResponseEntity.status(HttpStatus.valueOf(400))
+                    .body("Client error");
+        }
         if (message.getMessageText() == null){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Conflict");
@@ -90,9 +94,17 @@ public class SocialMediaController {
         return messageService.getAllMessages();
     }
 
+    // Get All Messages by Account ID
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getAllMessagesByAccountId(@PathVariable Integer accountId) {
+        List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
+
+        return ResponseEntity.ok(messages);
+    }
+
     // Get Message By Id
     @GetMapping("/messages/{messageId}")
-    public ResponseEntity<Message> getMessageById(@PathVariable Long messageId){
+    public ResponseEntity<Message> getMessageById(@PathVariable Integer messageId){
         Message message = messageService.getMessageById(messageId);
         //Optional<Message> message = messageService.getMessageById(messageId);
 
@@ -100,7 +112,7 @@ public class SocialMediaController {
 
         if (message == null){
         //if (message.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .build();
         } else {
             //return ResponseEntity.ok(message.get());
@@ -110,32 +122,33 @@ public class SocialMediaController {
 
     // Delete Message
     @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<?> deleteMessageById(@PathVariable Long messageId){
+    public ResponseEntity<?> deleteMessageById(@PathVariable Integer messageId){
 
-        boolean deletedMessage = messageService.deleteMessageById(messageId);
+        Optional<Message> deletedMessage = messageService.deleteMessageById(messageId);
         // messageService.deleteMessageById(messageId);
 
         // return ResponseEntity.accepted()
         //             .body("Successfully deleted");
-
-        if (deletedMessage){
+        System.out.println("deletedMessage");
+        if (deletedMessage == null){
             // return ResponseEntity.ok()
             //             .body("Successfully deleted");
-
-            return ResponseEntity.ok("Successfully deleted");
-
+            System.out.println("did it get here???");
+            return ResponseEntity.status(HttpStatus.OK).build();
             // return ResponseEntity.status(HttpStatus.valueOf(200))
             //             .body("Successfully deleted");
 
         } else {
-            return ResponseEntity.ok().build();
+            
+            System.out.println("here???");
+            return ResponseEntity.status(HttpStatus.OK).body("1");
             //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not found");
         }
     }
 
     // Update Message
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, @RequestBody Message message){
+    public ResponseEntity<?> updateMessageById(@PathVariable Integer messageId, @RequestBody Message message){
         if (message.getMessageText().isEmpty() || message.getMessageText().length() > 255){
             // return ResponseEntity.status(HttpStatus.valueOf(400))
             //         .body("Client error");
@@ -143,13 +156,14 @@ public class SocialMediaController {
                         .body("Client error");
         }
 
-        boolean updatedMessage = messageService.updateMessageById(messageId, message.getMessageText());
+        Message updatedMessage = messageService.updateMessageById(messageId, message.getMessageText());
         
-        if (message.getMessageText() == null){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
+        if (updatedMessage == null){
+            return ResponseEntity.status(HttpStatus.valueOf(400))
                     .body("Conflict");
         } else {
-            return ResponseEntity.ok(updatedMessage);
+            return ResponseEntity.status(HttpStatus.OK)
+            .body("1");
         }
     }
 

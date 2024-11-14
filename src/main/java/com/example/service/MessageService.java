@@ -26,8 +26,10 @@ public class MessageService {
 
     // Create Message
     public Message createMessage(Message message){
-
-        //Account account = accountRepository.findById(message.getPostedBy())
+        Account account = accountRepository.findAccountByAccountId(message.getPostedBy());
+        if (account == null){
+            return null;
+        } 
 
         return messageRepository.save(message);
 
@@ -38,8 +40,13 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
+    // Get All Messages By Account ID
+    public List<Message> getAllMessagesByAccountId(Integer accountId){
+        return messageRepository.findByPostedBy(accountId);
+    }
+
     // Get Message By Id
-    public Message getMessageById(Long messageId){
+    public Message getMessageById(Integer messageId){
 
         try {
             Optional<Message> message = messageRepository.findById(messageId);
@@ -58,33 +65,30 @@ public class MessageService {
     }
 
     // Delete Message
-    public boolean deleteMessageById(Long messageId){
-
-        try {
-            if (messageRepository.existsById(messageId)){
-                messageRepository.deleteById(messageId);
-                return true;
-            } else return false;
-        } catch (Exception e) {
-            // TODO: handle exception
-            return false;
+    public Optional<Message> deleteMessageById(Integer messageId){
+        Optional<Message> deletedMessage = messageRepository.findById(messageId);
+        System.out.println("here");
+        if (deletedMessage.isPresent()){
+            messageRepository.deleteById(messageId);
+            return deletedMessage;
+        } else{
+            return null;
         }
 
     }
 
     // Update Message
-    public boolean updateMessageById(Long messageId, String updatedMessage){
+    public Message updateMessageById(Integer messageId, String updatedMessage){
         Optional<Message> updateMessage = messageRepository.findById(messageId);
 
         if (updateMessage.isEmpty()){
-            return false;
+            return null;
         }
 
         Message message = updateMessage.get();
         message.setMessageText(updatedMessage);
 
-        messageRepository.save(message);
+        return messageRepository.save(message);
 
-        return true;
     }
 }
